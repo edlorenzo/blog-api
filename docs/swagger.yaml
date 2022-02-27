@@ -1,0 +1,593 @@
+basePath: /api
+definitions:
+  handler.DataList:
+    properties:
+      author:
+        type: string
+      content:
+        type: string
+      creator:
+        type: integer
+      id:
+        type: integer
+      modifier:
+        type: integer
+      title:
+        type: string
+      user:
+        properties:
+          createdAt:
+            type: string
+          id:
+            type: integer
+          updatedAt:
+            type: string
+        type: object
+    type: object
+  handler.articleCreateRequest:
+    properties:
+      article:
+        properties:
+          author:
+            type: string
+          content:
+            type: string
+          title:
+            type: string
+        type: object
+    type: object
+  handler.articleDataListResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/handler.DataList'
+        type: array
+      message:
+        type: string
+      status:
+        type: integer
+    type: object
+  handler.articleResponse:
+    properties:
+      data:
+        properties:
+          author:
+            type: string
+          content:
+            type: string
+          creator:
+            type: integer
+          id:
+            type: integer
+          modifier:
+            type: integer
+          title:
+            type: string
+          user:
+            properties:
+              createdAt:
+                type: string
+              id:
+                type: integer
+              updatedAt:
+                type: string
+            type: object
+        type: object
+    type: object
+  handler.articleUpdateRequest:
+    properties:
+      article:
+        properties:
+          author:
+            type: string
+          content:
+            type: string
+          title:
+            type: string
+        type: object
+    type: object
+  handler.singleArticleResponse:
+    properties:
+      article:
+        $ref: '#/definitions/handler.articleResponse'
+    type: object
+  handler.userLoginRequest:
+    properties:
+      user:
+        properties:
+          email:
+            type: string
+          password:
+            type: string
+        required:
+        - email
+        - password
+        type: object
+    type: object
+  handler.userRegisterRequest:
+    properties:
+      user:
+        properties:
+          email:
+            type: string
+          password:
+            type: string
+          role_type:
+            type: integer
+          username:
+            type: string
+        required:
+        - email
+        - password
+        - username
+        type: object
+    type: object
+  handler.userResponse:
+    properties:
+      user:
+        properties:
+          created_at:
+            type: string
+          creator:
+            type: integer
+          email:
+            type: string
+          id:
+            type: integer
+          modifier:
+            type: integer
+          role_type:
+            type: integer
+          token:
+            type: string
+          updated_at:
+            type: string
+          username:
+            type: string
+        type: object
+    type: object
+  handler.userUpdateRequest:
+    properties:
+      user:
+        properties:
+          email:
+            type: string
+          password:
+            type: string
+          role_type:
+            type: integer
+        type: object
+    type: object
+  utils.Error:
+    properties:
+      errors:
+        additionalProperties: true
+        type: object
+    type: object
+info:
+  contact: {}
+  description: Blog API
+  title: Blog API
+paths:
+  /articles:
+    post:
+      consumes:
+      - application/json
+      description: Create an article. Auth is require
+      operationId: create-article
+      parameters:
+      - description: Article to create
+        in: body
+        name: article
+        required: true
+        schema:
+          $ref: '#/definitions/handler.articleCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handler.singleArticleResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Error'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/utils.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Error'
+      security:
+      - ApiKeyAuth: []
+      summary: Create an article
+      tags:
+      - article
+  /articles/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an article. Auth is required
+      operationId: delete-article
+      parameters:
+      - description: ID of the article to delete
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Error'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete an article
+      tags:
+      - article
+    get:
+      consumes:
+      - application/json
+      description: Get an article. Auth not required
+      operationId: get-article-by-id
+      parameters:
+      - description: ID of the article to get
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.singleArticleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Error'
+      summary: Get an article
+      tags:
+      - article
+    put:
+      consumes:
+      - application/json
+      description: Update an article. Auth is required
+      operationId: update-article
+      parameters:
+      - description: ID of the article to update
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Article to update
+        in: body
+        name: article
+        required: true
+        schema:
+          $ref: '#/definitions/handler.articleUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.singleArticleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Error'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/utils.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Error'
+      security:
+      - ApiKeyAuth: []
+      summary: Update an article
+      tags:
+      - article
+  /articles/{limit}/{offset}:
+    get:
+      consumes:
+      - application/json
+      description: Get most recent article globally. Auth is optional
+      operationId: get-article
+      parameters:
+      - description: Limit number of articles returned (default is 20)
+        in: path
+        name: limit
+        required: true
+        type: integer
+      - description: Offset/skip number of articles (default is 0)
+        in: path
+        name: offset
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.articleDataListResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Error'
+      summary: Get all articles with Limit and Offset.
+      tags:
+      - article
+  /articles/list:
+    get:
+      consumes:
+      - application/json
+      description: Get article list. Auth not required
+      operationId: get-article-lists
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.articleDataListResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Error'
+      summary: Get all articles
+      tags:
+      - article
+  /profiles/{username}:
+    get:
+      consumes:
+      - application/json
+      description: Get a profile of a user of the system. Auth is optional
+      operationId: get-profile
+      parameters:
+      - description: Username of the profile to get
+        in: path
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.userResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Error'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/utils.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Error'
+      security:
+      - ApiKeyAuth: []
+      summary: Get a profile
+      tags:
+      - profile
+  /user:
+    get:
+      consumes:
+      - application/json
+      description: Gets the currently logged-in user
+      operationId: current-user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.userResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Error'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/utils.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Error'
+      security:
+      - ApiKeyAuth: []
+      summary: Get the current user
+      tags:
+      - user
+    put:
+      consumes:
+      - application/json
+      description: Update user information for current user
+      operationId: update-user
+      parameters:
+      - description: User details to update. At least **one** field is required.
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/handler.userUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.userResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Error'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/utils.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Error'
+      security:
+      - ApiKeyAuth: []
+      summary: Update current user
+      tags:
+      - user
+  /users:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user
+      operationId: sign-up
+      parameters:
+      - description: User info for registration
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/handler.userRegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handler.userResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Error'
+        "404":
+          description: Not Found
+          schema:
+            type: objects
+        "500":
+          description: Internal Server Error
+          schema:
+            type: objects
+      summary: Register a new user
+      tags:
+      - user
+  /users/login:
+    post:
+      consumes:
+      - application/json
+      description: Login for existing user
+      operationId: login
+      parameters:
+      - description: Credentials to use
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/handler.userLoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.userResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Error'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/utils.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Error'
+      summary: Login for existing user
+      tags:
+      - user
+produces:
+- article/json
+schemes:
+- http
+- https
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

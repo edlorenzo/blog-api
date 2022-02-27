@@ -1,0 +1,735 @@
+{
+	"info": {
+		"_postman_id": "13b64dd2-9ec8-4196-8c8a-c75a1dba24d9",
+		"name": "Blog-API",
+		"description": "Collection for testing the Blog API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (!(environment.isIntegrationTest)) {",
+									"    var responseJSON = JSON.parse(responseBody);",
+									"",
+									"    tests['Response contains \"user\" property'] = responseJSON.hasOwnProperty('user');",
+									"",
+									"    var user = responseJSON.user || {};",
+									"",
+									"    tests['User has \"email\" property'] = user.hasOwnProperty('email');",
+									"    tests['User has \"role_type\" property'] = user.hasOwnProperty('role_type');",
+									"    tests['User has \"username\" property'] = user.hasOwnProperty('username');",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Requested-With",
+								"value": "XMLHttpRequest"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user\": {\n    \"email\": \"test4@gmail.com\",\n    \"password\": \"abc123\",\n    \"role_type\": 1,\n    \"username\": \"test4\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}/users",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var responseJSON = JSON.parse(responseBody);",
+									"",
+									"tests['Response contains \"user\" property'] = responseJSON.hasOwnProperty('user');",
+									"",
+									"var user = responseJSON.user || {};",
+									"",
+									"tests['User has \"email\" property'] = user.hasOwnProperty('email');",
+									"tests['User has \"token\" property'] = user.hasOwnProperty('token');",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Requested-With",
+								"value": "XMLHttpRequest"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user\": {\n    \"email\": \"test4@gmail.com\",\n    \"password\": \"abc123\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}/users/login",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login and Remember Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var responseJSON = JSON.parse(responseBody);",
+									"",
+									"tests['Response contains \"user\" property'] = responseJSON.hasOwnProperty('user');",
+									"",
+									"var user = responseJSON.user || {};",
+									"",
+									"tests['User has \"email\" property'] = user.hasOwnProperty('email');",
+									"tests['User has \"username\" property'] = user.hasOwnProperty('username');",
+									"tests['User has \"token\" property'] = user.hasOwnProperty('token');",
+									"",
+									"if(tests['User has \"token\" property']){",
+									"    pm.globals.set('token', user.token);",
+									"}",
+									"",
+									"tests['Global variable \"token\" has been set'] = pm.globals.get('token') === user.token;",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Requested-With",
+								"value": "XMLHttpRequest"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user\": {\n    \"email\": \"test4@gmail.com\",\n    \"password\": \"abc123\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}/users/login",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Current User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var responseJSON = JSON.parse(responseBody);",
+									"",
+									"tests['Response contains \"user\" property'] = responseJSON.hasOwnProperty('user');",
+									"",
+									"var user = responseJSON.user || {};",
+									"",
+									"tests['id is an integer'] = Number.isInteger(user.id);",
+									"tests['User has \"email\" property'] = user.hasOwnProperty('email');",
+									"tests['User has \"username\" property'] = user.hasOwnProperty('username');",
+									"tests['role_type is an integer'] = Number.isInteger(user.role_type);",
+									"tests['creator is an integer'] = Number.isInteger(user.creator);",
+									"tests['modifier is an integer'] = Number.isInteger(user.modifier);",
+									"tests['User has \"token\" property'] = user.hasOwnProperty('token');",
+									"tests['User\\'s \"created_at\" property is an ISO 8601 timestamp'] = /^\\d{4,}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d.\\d+(?:[+-][0-2]\\d:[0-5]\\d|Z)$/.test(user.created_at);",
+									"tests['User\\'s \"updated_at\" property is an ISO 8601 timestamp'] = /^\\d{4,}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d.\\d+(?:[+-][0-2]\\d:[0-5]\\d|Z)$/.test(user.updated_at);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Requested-With",
+								"value": "XMLHttpRequest"
+							},
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{HOST}}/user",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var responseJSON = JSON.parse(responseBody);",
+									"",
+									"tests['Response contains \"user\" property'] = responseJSON.hasOwnProperty('user');",
+									"",
+									"var user = responseJSON.user || {};",
+									"",
+									"tests['id is an integer'] = Number.isInteger(user.id);",
+									"tests['User has \"email\" property'] = user.hasOwnProperty('email');",
+									"tests['User has \"username\" property'] = user.hasOwnProperty('username');",
+									"tests['role_type is an integer'] = Number.isInteger(user.role_type);",
+									"tests['creator is an integer'] = Number.isInteger(user.creator);",
+									"tests['modifier is an integer'] = Number.isInteger(user.modifier);",
+									"tests['User has \"token\" property'] = user.hasOwnProperty('token');",
+									"tests['User\\'s \"created_at\" property is an ISO 8601 timestamp'] = /^\\d{4,}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d.\\d+(?:[+-][0-2]\\d:[0-5]\\d|Z)$/.test(user.created_at);",
+									"tests['User\\'s \"updated_at\" property is an ISO 8601 timestamp'] = /^\\d{4,}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d.\\d+(?:[+-][0-2]\\d:[0-5]\\d|Z)$/.test(user.updated_at);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Requested-With",
+								"value": "XMLHttpRequest"
+							},
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user\": {\n    \"email\": \"test4@gmail.com\",\n    \"password\": \"abc123\",\n    \"role_type\": 4\n  }\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}/user",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Articles",
+			"item": [
+				{
+					"name": "Create New",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (!(environment.isIntegrationTest)) {",
+									"    var responseJSON = JSON.parse(responseBody);",
+									"",
+									"    tests['Response contains \"article\" property'] = responseJSON.hasOwnProperty('article');",
+									"",
+									"    var article = responseJSON.article || {};",
+									"",
+									"    tests['Article has \"status\" property'] = article.hasOwnProperty('status');",
+									"    tests['Article has \"message\" property'] = article.hasOwnProperty('message');",
+									"",
+									"    let jsonData = pm.response.json()",
+									"",
+									"    pm.test('Article data `title|content|author` contains string111', () => {",
+									"        _.each(jsonData.data, (item) => {",
+									"            pm.expect(item.title).to.include('string111')",
+									"            pm.expect(item.content).to.include('string111')",
+									"            pm.expect(item.author).to.include('string111')",
+									"        })",
+									"    })",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "X-Requested-With",
+								"value": "XMLHttpRequest",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"article\": {\n    \"author\": \"string111\",\n    \"content\": \"string111\",\n    \"title\": \"string111\"\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/articles",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"articles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Article List",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var is200Response = responseCode.code === 200;",
+									"",
+									"tests['Response code is 200 OK'] = is200Response;",
+									"",
+									"if(is200Response){",
+									"    var responseJSON = JSON.parse(responseBody);",
+									"",
+									"    var article = responseJSON.article || {};",
+									"    ",
+									"    tests['Response contains \"article\" property'] = responseJSON.hasOwnProperty('article');",
+									"    tests['Article has \"status\" property'] = article.hasOwnProperty('status');",
+									"    tests['Article has \"message\" property'] = article.hasOwnProperty('message');",
+									"",
+									"    let jsonData = pm.response.json()",
+									"",
+									"    pm.test('Article data `title|content|author` contains string111', () => {",
+									"        _.each(jsonData.data, (item) => {",
+									"            pm.expect(item.title).to.include('string111')",
+									"            pm.expect(item.content).to.include('string111')",
+									"            pm.expect(item.author).to.include('string111')",
+									"        })",
+									"    })",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Requested-With",
+								"value": "XMLHttpRequest"
+							}
+						],
+						"url": {
+							"raw": "{{HOST}}/articles/list",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"articles",
+								"list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Article by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var is200Response = responseCode.code === 200;",
+									"",
+									"tests['Response code is 200 OK'] = is200Response;",
+									"",
+									"if(is200Response){",
+									"    var responseJSON = JSON.parse(responseBody);",
+									"",
+									"    var article = responseJSON.article || {};",
+									"    ",
+									"    tests['Response contains \"article\" property'] = responseJSON.hasOwnProperty('article');",
+									"    tests['Article has \"status\" property'] = article.hasOwnProperty('status');",
+									"    tests['Article has \"message\" property'] = article.hasOwnProperty('message');",
+									"",
+									"    let jsonData = pm.response.json()",
+									"",
+									"    pm.test('Article data contains `title|content|author`', () => {",
+									"        _.each(jsonData.data, (item) => {",
+									"            item.hasOwnProperty('title')",
+									"            item.hasOwnProperty('content')",
+									"            item.hasOwnProperty('author')",
+									"        })",
+									"    })",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Requested-With",
+								"value": "XMLHttpRequest"
+							}
+						],
+						"url": {
+							"raw": "{{HOST}}/articles/1",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"articles",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Article List with Limit and Offset",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var is200Response = responseCode.code === 200;",
+									"",
+									"tests['Response code is 200 OK'] = is200Response;",
+									"",
+									"if(is200Response){",
+									"    var responseJSON = JSON.parse(responseBody);",
+									"",
+									"    var article = responseJSON.article || {};",
+									"    ",
+									"    tests['Response contains \"article\" property'] = responseJSON.hasOwnProperty('article');",
+									"    tests['Article has \"status\" property'] = article.hasOwnProperty('status');",
+									"    tests['Article has \"message\" property'] = article.hasOwnProperty('message');",
+									"",
+									"    let jsonData = pm.response.json()",
+									"",
+									"    pm.test('Article data contains `title|content|author`', () => {",
+									"        _.each(jsonData.data, (item) => {",
+									"            pm.expect(item.title).to.include('string111')",
+									"            pm.expect(item.content).to.include('string111')",
+									"            pm.expect(item.author).to.include('string111')",
+									"        })",
+									"    })",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Requested-With",
+								"value": "XMLHttpRequest"
+							}
+						],
+						"url": {
+							"raw": "{{HOST}}/articles/list/?limit=5&offset=2",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"articles",
+								"list",
+								""
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "5"
+								},
+								{
+									"key": "offset",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Article",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var responseJSON = JSON.parse(responseBody);",
+									"",
+									"tests['Response contains \"article\" property'] = responseJSON.hasOwnProperty('article');",
+									"",
+									"var article = responseJSON.article || {};",
+									"",
+									"tests['Article has \"status\" property'] = article.hasOwnProperty('status');",
+									"tests['Article has \"message\" property'] = article.hasOwnProperty('message');",
+									"",
+									"let jsonData = pm.response.json()",
+									"",
+									"pm.test('Article data contains `title|content|author`', () => {",
+									"    _.each(jsonData.data, (item) => {",
+									"        pm.expect(item.title).to.include('string updated')",
+									"        pm.expect(item.content).to.include('string updated')",
+									"        pm.expect(item.author).to.include('string updated')",
+									"        pm['Article\\'s \"created_at\" property is an ISO 8601 timestamp'] = /^\\d{4,}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d.\\d+(?:[+-][0-2]\\d:[0-5]\\d|Z)$/.test(item.created_at);",
+									"        pm['Article\\'s \"updated_at\" property is an ISO 8601 timestamp'] = /^\\d{4,}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d.\\d+(?:[+-][0-2]\\d:[0-5]\\d|Z)$/.test(item.updated_at);",
+									"    })",
+									"})",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Requested-With",
+								"value": "XMLHttpRequest"
+							},
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"article\": {\n    \"author\": \"string updated\",\n    \"content\": \"string updated\",\n    \"title\": \"string updated\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}/articles/1",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"articles",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var responseJSON = JSON.parse(responseBody);",
+									"",
+									"tests['Response contains \"article\" property'] = responseJSON.hasOwnProperty('article');",
+									"",
+									"var article = responseJSON.article || {};",
+									"",
+									"tests['Article has \"status\" property'] = article.hasOwnProperty('status');",
+									"tests['Article has \"message\" property'] = article.hasOwnProperty('message');",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "X-Requested-With",
+								"value": "XMLHttpRequest",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{HOST}}/articles/1",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"articles",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Profiles",
+			"item": [
+				{
+					"name": "Profile",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var responseJSON = JSON.parse(responseBody);",
+									"",
+									"tests['Response contains \"profile\" property'] = responseJSON.hasOwnProperty('profile');",
+									"",
+									"var profile = responseJSON.profile || {};",
+									"",
+									"tests['Profile has \"email\" property'] = profile.hasOwnProperty('email');",
+									"tests['Profile has \"username\" property'] = profile.hasOwnProperty('username');",
+									"tests['role_type is an integer'] = Number.isInteger(profile.role_type);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Requested-With",
+								"value": "XMLHttpRequest"
+							},
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{HOST}}/profiles/test4",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"profiles",
+								"test4"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
